@@ -1,0 +1,122 @@
+plugins {
+	id 'java'
+    id 'maven-publish'
+	id 'org.springframework.boot' version '4.0.2'
+	id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.graalvm.buildtools.native' version '0.11.5'
+}
+
+group = 'com.web.app'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+bootRun {
+    systemProperty "spring.profiles.active", findProperty('spring.profiles.active') ?: 'dev'
+}
+
+ext {
+//    set('springAiVersion', "2.0.0-M4")
+    resilience4jVersion = '2.4.0'
+}
+
+jar {
+    archiveBaseName = 'application-mysql'
+    //TODO Optional: Set a specific version if not using default project version
+    archiveVersion = '1.0'
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:5.0.0'
+    //TODO GRAPHQL APIS
+    implementation 'org.springframework.boot:spring-boot-starter-graphql'
+    //TODO REDIS CACHE
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'io.lettuce:lettuce-core'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    //TODO ENCRYPTION
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+    implementation 'org.apache.commons:commons-pool2'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    //TODO RATE LIMIT TO APIS
+    implementation platform("io.github.resilience4j:resilience4j-bom:${resilience4jVersion}")
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3'
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker'
+    implementation 'io.github.resilience4j:resilience4j-reactor' // For reactive streams
+    implementation 'com.bucket4j:bucket4j_jdk17-core:8.18.0'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	implementation group: 'com.bucket4j', name: 'bucket4j-core', version: '8.10.1'
+	implementation group: 'com.bucket4j', name: 'bucket4j-redis', version: '8.7.0'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.3'
+//    implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+//    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+//    implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
+//    implementation 'org.springframework.ai:spring-ai-tika-document-reader'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.13.0'
+    //TODO GZIP
+    //TODO SWAGGER
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+    compileOnly "io.swagger.core.v3:swagger-annotations:2.2.15"
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '4.0.1'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    //TODO DATABASES
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-graphql-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-cache-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+//    }
+//}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+

@@ -1,0 +1,90 @@
+name: Deploying Spring Boot Application GitHub Action Self Hosted
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+      - main
+  pull_request:
+
+jobs:
+
+  # ✅ BUILD JOB (Common)
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-build
+          path: build/libs/*.jar
+
+  # ✅ DEV DEPLOYMENT
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: dev
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-build
+
+      - name: Deploy to Dev Server
+        run: |
+          echo "Deploying to DEV..."
+          # Example: copy to server / kubectl apply / docker run
+
+  # ✅ STAGING DEPLOYMENT
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/staging'
+    environment: staging
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-build
+
+      - name: Deploy to Staging Server
+        run: |
+          echo "Deploying to STAGING..."
+
+  # ✅ PRODUCTION DEPLOYMENT
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: prod   # 👈 add approval in GitHub UI
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-build
+
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to PRODUCTION..."
